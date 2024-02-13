@@ -1,16 +1,20 @@
 import { ethers } from "hardhat";
 
 async function main() {
-    // Get the ContractFactory and Signers here.
-    const toDoDapp = await ethers.getContractFactory("toDoDapp");
-    const toDoDappDeployed = await toDoDapp.deploy();
+  const todoapp = await ethers.deployContract("toDoDapp")  
 
-    await toDoDappDeployed.deployed();
+  await todoapp.waitForDeployment();
 
-    console.log("toDoDapp deployed to:", toDoDappDeployed.address);
+  console.log(
+    `SetteeGetter contract deployed to ${todoapp.target}`
+  );
 }
 
+// We recommend this pattern to be able to use async/await everywhere
+// and properly handle errors.
 main().catch((error) => {
-    console.error(error);
-    process.exitCode = 1;
+  console.error(error);
+  process.exitCode = 1;
 });
+
+// 0x5FbDB2315678afecb367f032d93F642f64180aa3
