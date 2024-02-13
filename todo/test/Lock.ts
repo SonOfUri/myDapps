@@ -9,7 +9,6 @@ describe("ToDoDapp", function () {
     accounts = await ethers.getSigners();
     const toDoDappFactory = await ethers.getContractFactory("toDoDapp");
     toDoDapp = await toDoDappFactory.deploy();
-    // await toDoDapp.deployed();
   });
 
   describe("toggleItemStatus", function () {
@@ -31,5 +30,22 @@ describe("ToDoDapp", function () {
     });
   });
 
-  // Your tests go here...
+  describe("addItem and items", function () {
+    it("Should add a new item and retrieve it correctly", async function () {
+      const title = "Test Task";
+      const description = "Test Description";
+
+      // Add an item
+      await toDoDapp.addItem(title, description);
+
+      // Retrieve the first item (assuming it has index 0)
+      const item = await toDoDapp.items(0);
+
+      // Verify that the retrieved item's properties match the input
+      expect(item.title).to.equal(title);
+      expect(item.description).to.equal(description);
+      expect(item.status).to.be.false; // Assuming the default status is 'false' for a new item
+    });
+  });
+
 });
