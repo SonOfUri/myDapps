@@ -48,4 +48,20 @@ describe("ToDoDapp", function () {
     });
   });
 
+  describe("deleteItem", function () {
+    it("Should delete an item and reduce the array length", async function () {
+      // Add two items
+      await toDoDapp.addItem("Item 1", "Description 1");
+      await toDoDapp.addItem("Item 2", "Description 2");
+
+      // Delete the first item (assuming it has ID 0)
+      await toDoDapp.deleteItem(0);
+
+      // Attempt to get the item at index 0 and check the title to ensure it's now "Item 2"
+      const item = await toDoDapp.items(0);
+      expect(item.title).to.equal("Item 2");
+    });
+  });
+
+
 });
