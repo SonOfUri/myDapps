@@ -61,4 +61,24 @@ contract StakingContract {
         uint256 reward = (stakedAmount * APY * stakingDuration) / (365 days * 100);
         return reward;
     }
+
+    // Advanced Reward
+    //     function calculateReward(address user) public view returns (uint256) {
+    //     uint256 stakedAmount = stakedBalances[user];
+    //     if (stakedAmount == 0) return 0;
+
+    //     uint256 stakingDurationInDays = (block.timestamp - stakingStartTime[user]) / 1 days;
+    //     uint256 dailyRate = APY / 36500;  // Assuming APY is provided as a percentage times 100
+
+    //     // Compounding daily
+    //     uint256 total = stakedAmount;
+    //     for (uint256 i = 0; i < stakingDurationInDays; i++) {
+    //         total += (total * dailyRate) / 10000;
+    //     }
+
+    //     // Subtract the initial stake to get just the reward
+    //     uint256 reward = total - stakedAmount;
+    //     return reward;
+    // }
+
 }
