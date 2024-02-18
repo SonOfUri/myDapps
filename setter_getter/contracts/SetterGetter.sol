@@ -10,7 +10,7 @@ contract SetterGetteer{
         myName = _name;
     }
 
-    function getNamee() public view returns ( string memory )  {
+    function getName() public view returns ( string memory )  {
         return myName;
     }
 }
