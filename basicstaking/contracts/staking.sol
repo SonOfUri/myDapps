@@ -9,7 +9,9 @@ interface IERC20 {
 
 contract StakingContract {
     IERC20 public stakingToken;
+
     uint256 public constant APY = 10;  // 10% Annual Percentage Yield
+
     mapping(address => uint256) public stakedBalances;
     mapping(address => uint256) public stakingStartTime;
 
@@ -53,6 +55,27 @@ contract StakingContract {
         emit Unstaked(msg.sender, stakedAmount);
     }
 
+    function unstakeV2() external {
+        uint256 stakedAmount = stakedBalances[msg.sender];
+        require(stakedAmount > 0, "Nothing to unstake");
+
+        // Calculate the reward
+        uint256 reward = calculateRewardV2(msg.sender);
+
+        // Reset staked balance and staking start time
+        stakedBalances[msg.sender] = 0;
+        stakingStartTime[msg.sender] = 0;
+
+        // Transfer the staked tokens and reward back to the user
+        require(stakingToken.transfer(msg.sender, stakedAmount), "Unstake transfer failed");
+        if (reward > 0) {
+            require(stakingToken.transfer(msg.sender, reward), "Reward transfer failed");
+            emit RewardPaid(msg.sender, reward);
+        }
+
+        emit Unstaked(msg.sender, stakedAmount);
+    }
+
     function calculateReward(address user) public view returns (uint256) {
         uint256 stakedAmount = stakedBalances[user];
         if (stakedAmount == 0) return 0;
@@ -62,23 +85,23 @@ contract StakingContract {
         return reward;
     }
 
-    // Advanced Reward
-    //     function calculateReward(address user) public view returns (uint256) {
-    //     uint256 stakedAmount = stakedBalances[user];
-    //     if (stakedAmount == 0) return 0;
+    // // Advanced Reward
+        function calculateRewardV2(address user) public view returns (uint256) {
+        uint256 stakedAmount = stakedBalances[user];
+        if (stakedAmount == 0) return 0;
 
-    //     uint256 stakingDurationInDays = (block.timestamp - stakingStartTime[user]) / 1 days;
-    //     uint256 dailyRate = APY / 36500;  // Assuming APY is provided as a percentage times 100
+        uint256 stakingDurationInDays = (block.timestamp - stakingStartTime[user]) / 1 days;
+        uint256 dailyRate = APY / 36500;  // Assuming APY is provided as a percentage times 100
 
-    //     // Compounding daily
-    //     uint256 total = stakedAmount;
-    //     for (uint256 i = 0; i < stakingDurationInDays; i++) {
-    //         total += (total * dailyRate) / 10000;
-    //     }
+        // Compounding daily
+        uint256 total = stakedAmount;
+        for (uint256 i = 0; i < stakingDurationInDays; i++) {
+            total += (total * dailyRate) / 10000;
+        }
 
-    //     // Subtract the initial stake to get just the reward
-    //     uint256 reward = total - stakedAmount;
-    //     return reward;
-    // }
+        // Subtract the initial stake to get just the reward
+        uint256 reward = total - stakedAmount;
+        return reward;
+    }
 
 }
